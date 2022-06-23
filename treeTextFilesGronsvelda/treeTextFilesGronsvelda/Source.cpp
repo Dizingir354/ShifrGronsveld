@@ -4,15 +4,66 @@
 #include <iomanip>
 #include <fstream>
 
+
 using namespace std;
 
 string lib;
+
+string encrypt(string str, string key)
+{
+	int temp;
+	int temp1;
+	int temp2;
+	string encryptText;
+	for (int i = 0; i < str.length(); i++)
+	{
+		for (int j = 0; j < lib.length(); j++)
+		{
+			if ((char)str[i] == lib[j]) //находим букву в алфавите
+			{
+				temp = (j + int(key[i])) % lib.length();
+				encryptText += lib[temp];
+			}
+		}
+
+	}
+	
+	cout << "Зашыфрованый текст: ";
+	cout << encryptText << endl;
+	return encryptText;
+}
+string dencrypt(string str, string key)
+{
+	int temp;
+	string encryptText;
+	for (int i = 0; i < str.length(); i++)
+	{
+		for (int j = 0; j < lib.length(); j++)
+		{
+			if ((char)str[i] == lib[j]) //находим букву в алфавите
+			{
+				//делить по модулю на размар слов
+				temp = j - int(key[i]);
+				if (temp < 0)
+				{
+					temp += lib.length();
+				}
+				else
+				{
+					temp = (j - int(key[i])) % lib.length();
+				}
+				encryptText += lib[temp];
+			}
+		}
+	}
+	cout << "Разашыфрованый текст: ";
+	cout << encryptText << endl;
+	cout << "\n----------------------------------------\n";
+	return encryptText;
+}
+
 string MakeLib()
 {
-	for (int i = 32; i == 32; i++) //upercace
-	{
-		lib += (char)i;
-	}
 	for (int i = 65; i <= 90; i++) //upercace
 	{
 		lib += (char)i;
@@ -39,27 +90,18 @@ string MakeLib()
 	}
 	return lib;
 }
-
-string encrypt(string str, int key[])
+bool CheckNum(string str)
 {
-	int temp;
-	string encryptText;
 	for (int i = 0; i < str.length(); i++)
 	{
-		for (int j = 0; j < lib.length(); j++)
+		if (!isdigit(str[i]))
 		{
-			if ((char)str[i] == lib[j]) //находим букву в алфавите
-			{
-				temp = (j + key[i]) % lib.length();
-				encryptText += lib[temp];
-			}
+			cout << "error" << endl;
+			return false;
 		}
 	}
-	cout << "Зашыфрованый текст: ";
-	cout << encryptText << endl;
-	return encryptText;
+	return true;
 }
-
 void PrintLib(string str)
 {
 	cout << "Рядом с символами поставлен их порядочний номер" << endl;
@@ -85,58 +127,34 @@ void PrintLib(string str)
 	}
 	cout << "\n----------------------------------------\n";
 }
-
-#define WRITE
-int main()
+void main()
 {
 	setlocale(LC_ALL, "Russian");
-	string OutFiles = "D:\\Шаг\\Средняя академия ШАГ\\Програмирование\\GitHub\\Sort\\treeTextFilesGronsvelda\\treeTextFilesGronsvelda\\standart.txt";
-	string InFilesShifr = "D:\\Шаг\\Средняя академия ШАГ\\Програмирование\\GitHub\\Sort\\treeTextFilesGronsvelda\\treeTextFilesGronsvelda\\Shifr.txt";
-	string InFilesNoShifr = "D:\\Шаг\\Средняя академия ШАГ\\Програмирование\\GitHub\\Sort\\treeTextFilesGronsvelda\\treeTextFilesGronsvelda\\Текст.txt";
-	ofstream fileIn;
-	ofstream fileInNoShifr;
-	ifstream fileOut;
-	fileOut.open(OutFiles);
-	fileIn.open(InFilesShifr);
-	fileInNoShifr.open(InFilesNoShifr);
-	if (fileOut.fail())	//открылся ли файл
-	{
-		cout << "Error openning file!\a\a\a\a\a\a\a" << endl;
-		return 404;
-	}
-	if (fileIn.fail())	//открылся ли файл
-	{
-		cout << "Error openning file!\a\a\a\a\a\a\a" << endl;
-		return 404;
-	}
-	if (fileInNoShifr.fail())	//открылся ли файл
-	{
-		cout << "Error openning file!\a\a\a\a\a\a\a" << endl;
-		return 404;
-	}
-
 	PrintLib(MakeLib());
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
-	string str;
-	int key[]{0};
-	string encrText;
+	string OutFiles = "standart.txt";
+	string InFiles = "Shifr.txt";
+	string InFilestwo = "Текст.txt";
+	ofstream fileIn;
+	ifstream fileOut;
+	ofstream fileInTwo;
+	fileOut.open(OutFiles);
+	fileInTwo.open(InFilestwo);
+	fileIn.open(InFiles);
 	while (true)
 	{
+		string str;
 		getline(fileOut, str);
-		
-		for (size_t i = 0; i < str.length(); i++)
+		cout << "Введите ключ размером с текст ("<<str.length()<<"): " << endl;
+		string key;
+		cin >> key;
+		string encrText;
+		if (CheckNum(key))
 		{
-			cout << "Введите ключ(один символ)";
-			cin >> key[i];
+			encrText = encrypt(str, key);
 		}
-		
-		encrText = encrypt(str, key);
-		
+		fileIn << encrText<<endl;
+		fileInTwo << dencrypt(encrText, key) << endl;
 	}
-	
-	
-	fileIn << encrText << endl;
-
-	return 0;
 }
