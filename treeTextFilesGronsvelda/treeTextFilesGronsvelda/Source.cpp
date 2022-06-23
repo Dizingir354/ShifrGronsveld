@@ -40,7 +40,7 @@ string MakeLib()
 	return lib;
 }
 
-string encrypt(string str, int key)
+string encrypt(string str, int key[])
 {
 	int temp;
 	string encryptText;
@@ -50,7 +50,7 @@ string encrypt(string str, int key)
 		{
 			if ((char)str[i] == lib[j]) //находим букву в алфавите
 			{
-				temp = (j + key) % lib.length();
+				temp = (j + key[i]) % lib.length();
 				encryptText += lib[temp];
 			}
 		}
@@ -90,9 +90,9 @@ void PrintLib(string str)
 int main()
 {
 	setlocale(LC_ALL, "Russian");
-	string OutFiles = "text.txt";
-	string InFilesShifr = "text1.txt";
-	string InFilesNoShifr = "text2.txt";
+	string OutFiles = "D:\\Шаг\\Средняя академия ШАГ\\Програмирование\\GitHub\\Sort\\treeTextFilesGronsvelda\\treeTextFilesGronsvelda\\standart.txt";
+	string InFilesShifr = "D:\\Шаг\\Средняя академия ШАГ\\Програмирование\\GitHub\\Sort\\treeTextFilesGronsvelda\\treeTextFilesGronsvelda\\Shifr.txt";
+	string InFilesNoShifr = "D:\\Шаг\\Средняя академия ШАГ\\Програмирование\\GitHub\\Sort\\treeTextFilesGronsvelda\\treeTextFilesGronsvelda\\Текст.txt";
 	ofstream fileIn;
 	ofstream fileInNoShifr;
 	ifstream fileOut;
@@ -119,12 +119,23 @@ int main()
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 	string str;
-	getline(fileOut, str);
-	int key;
+	int key[]{0};
 	string encrText;
-
-	encrText = encrypt(str, key);
-
+	while (true)
+	{
+		getline(fileOut, str);
+		
+		for (size_t i = 0; i < str.length(); i++)
+		{
+			cout << "Введите ключ(один символ)";
+			cin >> key[i];
+		}
+		
+		encrText = encrypt(str, key);
+		
+	}
+	
+	
 	fileIn << encrText << endl;
 
 	return 0;
